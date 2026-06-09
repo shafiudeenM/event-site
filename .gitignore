@@ -1,0 +1,15 @@
+# Dependencies
+**/node_modules/
+**/dist/
+.env
+
+# Editor / IDE settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db

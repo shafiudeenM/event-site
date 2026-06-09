@@ -1,0 +1,1796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Evoke Event CMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --admin-bg: #0f0f14;
+    --sidebar-bg: #16161d;
+    --card-bg: #1c1c26;
+    --card-border: #2a2a38;
+    --input-bg: #22222e;
+    --input-border: #333345;
+    --input-focus: #6c5ce7;
+    --accent: #6c5ce7;
+    --accent-glow: rgba(108, 92, 231, 0.25);
+    --accent-hover: #7d6ff0;
+    --danger: #e74c3c;
+    --danger-hover: #c0392b;
+    --success: #00b894;
+    --success-glow: rgba(0, 184, 148, 0.25);
+    --warning: #fdcb6e;
+    --text-primary: #e8e8f0;
+    --text-secondary: #8888a0;
+    --text-muted: #55556a;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--admin-bg);
+    color: var(--text-primary);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 260px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--card-border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    transition: transform 0.3s;
+  }
+
+  .sidebar-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .sidebar-header h1 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), #a29bfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .sidebar-header p {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 12px;
+  }
+  .nav-group-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px 12px 8px;
+  }
+
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 11px 14px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .nav-btn i { width: 18px; text-align: center; font-size: 0.85rem; }
+  .nav-btn:hover { background: rgba(108, 92, 231, 0.08); color: var(--text-primary); }
+  .nav-btn.active {
+    background: rgba(108, 92, 231, 0.15);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    margin-left: 260px;
+    flex: 1;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(15, 15, 20, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--card-border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topbar-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .topbar-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .content-area {
+    padding: 28px 32px 60px;
+  }
+
+  /* ── PANELS ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title i { color: var(--accent); font-size: 0.9rem; }
+  .card-subtitle {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  /* ── FORM ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .form-input, .form-textarea, .form-select {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+  .form-input:focus, .form-textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .form-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+  /* ── COLOR PICKER ── */
+  .color-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .color-swatch {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--card-border);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .color-swatch input[type="color"] {
+    position: absolute;
+    inset: -8px;
+    width: calc(100% + 16px);
+    height: calc(100% + 16px);
+    border: none;
+    cursor: pointer;
+  }
+  .color-hex {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    width: 110px;
+    outline: none;
+  }
+  .color-hex:focus { border-color: var(--accent); }
+
+  /* ── IMAGE PREVIEW ── */
+  .img-preview-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .img-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    border: 2px solid var(--card-border);
+    flex-shrink: 0;
+    background: var(--input-bg);
+  }
+  .img-preview.large {
+    width: 120px;
+    height: 80px;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.74rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 4px 16px var(--accent-glow); }
+  .btn-success {
+    background: var(--success);
+    color: #fff;
+  }
+  .btn-success:hover { box-shadow: 0 4px 16px var(--success-glow); }
+  .btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+  }
+  .btn-danger:hover { background: rgba(231, 76, 60, 0.1); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--card-border);
+  }
+  .btn-ghost:hover { border-color: var(--text-muted); color: var(--text-primary); }
+  .btn-sm { padding: 7px 12px; font-size: 0.7rem; }
+  .btn-icon {
+    width: 34px; height: 34px;
+    padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-icon:hover { color: var(--danger); border-color: var(--danger); }
+
+  /* ── REPEATER ITEMS ── */
+  .repeater-item {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .repeater-item .item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .repeater-item .item-number {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(108, 92, 231, 0.12);
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--success);
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.error { background: var(--danger); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .panel.active { animation: fadeIn 0.35s ease; }
+
+  /* ── COLOR GRID ── */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .color-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .color-item label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── THEME PREVIEW BAR ── */
+  .theme-preview {
+    display: flex;
+    gap: 4px;
+    margin-top: 20px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    height: 40px;
+  }
+  .theme-preview div {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  }
+
+  /* ── STATUS BADGE ── */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 600;
+  }
+  .status-badge.saved {
+    background: rgba(0, 184, 148, 0.12);
+    color: var(--success);
+  }
+  .status-badge.unsaved {
+    background: rgba(253, 203, 110, 0.12);
+    color: var(--warning);
+  }
+  .status-badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid.three { grid-template-columns: 1fr; }
+    .color-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h1><i class="fas fa-wand-magic-sparkles"></i> Evoke CMS</h1>
+    <p>Content Management</p>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group-label">Appearance</div>
+    <button class="nav-btn active" data-panel="theme" onclick="showPanel('theme')">
+      <i class="fas fa-palette"></i> Theme & Colors
+    </button>
+    <button class="nav-btn" data-panel="brand" onclick="showPanel('brand')">
+      <i class="fas fa-building"></i> Brand & Contact
+    </button>
+
+    <div class="nav-group-label">Sections</div>
+    <button class="nav-btn" data-panel="nav" onclick="showPanel('nav')">
+      <i class="fas fa-bars"></i> Navigation
+    </button>
+    <button class="nav-btn" data-panel="hero" onclick="showPanel('hero')">
+      <i class="fas fa-image"></i> Hero Banner
+    </button>
+    <button class="nav-btn" data-panel="callback" onclick="showPanel('callback')">
+      <i class="fas fa-phone"></i> Callback Strip
+    </button>
+    <button class="nav-btn" data-panel="about" onclick="showPanel('about')">
+      <i class="fas fa-info-circle"></i> About Us
+    </button>
+    <button class="nav-btn" data-panel="services" onclick="showPanel('services')">
+      <i class="fas fa-concierge-bell"></i> Services
+    </button>
+    <button class="nav-btn" data-panel="gallery" onclick="showPanel('gallery')">
+      <i class="fas fa-images"></i> Gallery
+    </button>
+    <button class="nav-btn" data-panel="why" onclick="showPanel('why')">
+      <i class="fas fa-star"></i> Why Choose Us
+    </button>
+    <button class="nav-btn" data-panel="keyservices" onclick="showPanel('keyservices')">
+      <i class="fas fa-list-check"></i> Key Services
+    </button>
+    <button class="nav-btn" data-panel="testimonials" onclick="showPanel('testimonials')">
+      <i class="fas fa-quote-right"></i> Testimonials
+    </button>
+    <button class="nav-btn" data-panel="faq" onclick="showPanel('faq')">
+      <i class="fas fa-circle-question"></i> FAQ
+    </button>
+    <button class="nav-btn" data-panel="excellence" onclick="showPanel('excellence')">
+      <i class="fas fa-trophy"></i> Excellence
+    </button>
+    <button class="nav-btn" data-panel="blogs" onclick="showPanel('blogs')">
+      <i class="fas fa-newspaper"></i> Blogs
+    </button>
+    <button class="nav-btn" data-panel="footer" onclick="showPanel('footer')">
+      <i class="fas fa-shoe-prints"></i> Footer
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="btn btn-ghost btn-sm" onclick="exportConfig()" style="width:100%;justify-content:center;">
+      <i class="fas fa-download"></i> Export Config
+    </button>
+    <button class="btn btn-danger btn-sm" onclick="resetAll()" style="width:100%;justify-content:center;">
+      <i class="fas fa-rotate-left"></i> Reset to Defaults
+    </button>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button class="btn-icon" onclick="document.getElementById('sidebar').classList.toggle('open')" style="display:none;" id="menuToggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <span class="topbar-title" id="panelTitle">Theme & Colors</span>
+    </div>
+    <div class="topbar-actions">
+      <span class="status-badge saved" id="statusBadge"><span class="dot"></span> Saved</span>
+      <button class="btn btn-ghost btn-sm" onclick="previewHtml()" title="Preview static HTML clone">
+        <i class="fas fa-code"></i> HTML Preview
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="previewSite()">
+        <i class="fas fa-eye"></i> Live Preview
+      </button>
+      <button class="btn btn-success btn-sm" onclick="saveAll()">
+        <i class="fas fa-check"></i> Save Changes
+      </button>
+    </div>
+  </div>
+
+  <div class="content-area">
+
+    <!-- ═══ THEME PANEL ═══ -->
+    <div class="panel active" id="panel-theme">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-palette"></i> Color Palette</div>
+        <div class="card-subtitle">Define your brand's color scheme. Changes apply across the entire website.</div>
+        <div class="color-grid" id="colorGrid"></div>
+        <div class="theme-preview" id="themePreview"></div>
+      </div>
+    </div>
+
+    <!-- ═══ BRAND PANEL ═══ -->
+    <div class="panel" id="panel-brand">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-building"></i> Business Information</div>
+        <div class="card-subtitle">Your company name, contact details, and social media links.</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Brand Name</label>
+            <input class="form-input" id="brand-name" placeholder="Evoke Event">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tagline</label>
+            <input class="form-input" id="brand-tagline" placeholder="& Wedding Planners">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea" id="brand-description" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone 1</label>
+            <input class="form-input" id="brand-phone1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone 2</label>
+            <input class="form-input" id="brand-phone2">
+          </div>
+          <div class="form-group">
+            <label class="form-label">WhatsApp Number</label>
+            <input class="form-input" id="brand-whatsapp" placeholder="e.g. 919876543210">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email 1</label>
+            <input class="form-input" id="brand-email1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email 2</label>
+            <input class="form-input" id="brand-email2">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Address</label>
+            <textarea class="form-textarea" id="brand-address" rows="2"></textarea>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Copyright Text</label>
+            <input class="form-input" id="brand-copyright">
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fab fa-facebook"></i> Social Media Links</div>
+        <div class="card-subtitle">Update your social media profile URLs.</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label"><i class="fab fa-facebook-f"></i> Facebook</label>
+            <input class="form-input" id="social-facebook">
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fab fa-instagram"></i> Instagram</label>
+            <input class="form-input" id="social-instagram">
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fab fa-youtube"></i> YouTube</label>
+            <input class="form-input" id="social-youtube">
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fab fa-pinterest-p"></i> Pinterest</label>
+            <input class="form-input" id="social-pinterest">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ NAV PANEL ═══ -->
+    <div class="panel" id="panel-nav">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-bars"></i> Navigation Links</div>
+        <div class="card-subtitle">Edit the main menu links and the CTA button text.</div>
+        <div class="form-grid" style="margin-bottom:20px;">
+          <div class="form-group full">
+            <label class="form-label">CTA Button Text</label>
+            <input class="form-input" id="nav-cta">
+          </div>
+        </div>
+        <div id="navLinksContainer"></div>
+        <button class="btn btn-primary btn-sm" onclick="addNavLink()" style="margin-top:12px;">
+          <i class="fas fa-plus"></i> Add Link
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ HERO PANEL ═══ -->
+    <div class="panel" id="panel-hero">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-image"></i> Hero Banner Images</div>
+        <div class="card-subtitle">Full-width sliding banner images.</div>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label">Center Slider Images (Changes every 5s)</label>
+            <div id="hero-slider-list" class="dynamic-list"></div>
+            <button class="btn" style="margin-top:12px;" onclick="addHeroSliderImage()"><i class="fas fa-plus"></i> Add Slider Image</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CALLBACK PANEL ═══ -->
+    <div class="panel" id="panel-callback">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-phone"></i> Request Callback Section</div>
+        <div class="card-subtitle">Top callback strip content.</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Label</label>
+            <input class="form-input" id="callback-label">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input class="form-input" id="callback-title">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Subtitle</label>
+            <textarea class="form-textarea" id="callback-subtitle" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ABOUT PANEL ═══ -->
+    <div class="panel" id="panel-about">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-info-circle"></i> About Us Content</div>
+        <div class="card-subtitle">Edit the "About Us" section text and images.</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Label</label>
+            <input class="form-input" id="about-label">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input class="form-input" id="about-title">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Button Text</label>
+            <input class="form-input" id="about-buttonText">
+          </div>
+        </div>
+        <div style="margin-top:18px;">
+          <label class="form-label">Paragraphs</label>
+          <div id="aboutParagraphsContainer"></div>
+          <button class="btn btn-primary btn-sm" onclick="addAboutParagraph()" style="margin-top:10px;">
+            <i class="fas fa-plus"></i> Add Paragraph
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fas fa-images"></i> About Images (4 Grid)</div>
+        <div id="aboutImagesContainer"></div>
+      </div>
+    </div>
+
+    <!-- ═══ SERVICES PANEL ═══ -->
+    <div class="panel" id="panel-services">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-concierge-bell"></i> Services Section</div>
+        <div class="card-subtitle">Edit the services header and add/remove service cards.</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Section Label</label>
+            <input class="form-input" id="services-label">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Section Title</label>
+            <input class="form-input" id="services-title">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Subtitle</label>
+            <textarea class="form-textarea" id="services-subtitle" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fas fa-grid"></i> Service Cards</div>
+        <div id="serviceCardsContainer"></div>
+        <button class="btn btn-primary btn-sm" onclick="addServiceCard()" style="margin-top:12px;">
+          <i class="fas fa-plus"></i> Add Service Card
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ GALLERY PANEL ═══ -->
+    <div class="panel" id="panel-gallery">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-images"></i> Photo Gallery</div>
+        <div class="card-subtitle">Manage the images displayed in your portfolio gallery grid.</div>
+        <div class="form-grid" style="margin-bottom:18px;">
+          <div class="form-group">
+            <label class="form-label">Section Label</label>
+            <input class="form-input" id="gallery-label">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Section Title</label>
+            <input class="form-input" id="gallery-title">
+          </div>
+        </div>
+        <div id="galleryContainer"></div>
+        <button class="btn btn-primary btn-sm" onclick="addGalleryImage()" style="margin-top:12px;">
+          <i class="fas fa-plus"></i> Add Gallery Image
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ WHY CHOOSE US PANEL ═══ -->
+    <div class="panel" id="panel-why">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-star"></i> Why Choose Us</div>
+        <div class="card-subtitle">Edit the "Why Choose Us" section content and feature items.</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Section Label</label>
+            <input class="form-input" id="why-label">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Section Title</label>
+            <input class="form-input" id="why-title">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Subtitle</label>
+            <textarea class="form-textarea" id="why-subtitle" rows="2"></textarea>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Center Image URL</label>
+            <div class="img-preview-row">
+              <img class="img-preview large" id="why-center-preview" src="">
+              <input class="form-input" id="why-centerImage" oninput="updateImgPreview('why-centerImage','why-center-preview')" style="flex:1;">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Left Side Features</div>
+        <div id="whyLeftContainer"></div>
+        <button class="btn btn-primary btn-sm" onclick="addWhyItem('left')" style="margin-top:12px;">
+          <i class="fas fa-plus"></i> Add Left Item
+        </button>
+      </div>
+      <div class="card">
+        <div class="card-title">Right Side Features</div>
+        <div id="whyRightContainer"></div>
+        <button class="btn btn-primary btn-sm" onclick="addWhyItem('right')" style="margin-top:12px;">
+          <i class="fas fa-plus"></i> Add Right Item
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ KEY SERVICES PANEL ═══ -->
+    <div class="panel" id="panel-keyservices">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-list-check"></i> Key Services</div>
+        <div class="card-subtitle">The keyword service list used for SEO and quick glance features.</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input class="form-input" id="ks-title">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subtitle</label>
+            <input class="form-input" id="ks-subtitle">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea" id="ks-description" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Button Text</label>
+            <input class="form-input" id="ks-buttonText">
+          </div>
+        </div>
+        <div style="margin-top:18px;">
+          <label class="form-label">Service Items</label>
+          <div id="ksItemsContainer"></div>
+          <button class="btn btn-primary btn-sm" onclick="addKsItem()" style="margin-top:10px;">
+            <i class="fas fa-plus"></i> Add Item
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TESTIMONIALS PANEL ═══ -->
+    <div class="panel" id="panel-testimonials">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-quote-right"></i> Testimonials</div>
+        <div class="card-subtitle">Manage client testimonials. The carousel auto-rotates through these.</div>
+        <div id="testimonialsContainer"></div>
+        <button class="btn btn-primary btn-sm" onclick="addTestimonial()" style="margin-top:12px;">
+          <i class="fas fa-plus"></i> Add Testimonial
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ FAQ PANEL ═══ -->
+    <div class="panel" id="panel-faq">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-circle-question"></i> FAQ</div>
+        <div class="card-subtitle">Add, edit, or remove frequently asked questions.</div>
+        <div id="faqContainer"></div>
+        <button class="btn btn-primary btn-sm" onclick="addFaq()" style="margin-top:12px;">
+          <i class="fas fa-plus"></i> Add Question
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ EXCELLENCE PANEL ═══ -->
+    <div class="panel" id="panel-excellence">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-trophy"></i> Evoke Excellence</div>
+        <div class="card-subtitle">Feature cards shown in the dark section. Each has an icon and short label.</div>
+        <div class="form-grid" style="margin-bottom:18px;">
+          <div class="form-group">
+            <label class="form-label">Section Label</label>
+            <input class="form-input" id="excellence-label">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Section Title</label>
+            <input class="form-input" id="excellence-title">
+          </div>
+        </div>
+        <div id="excellenceContainer"></div>
+        <button class="btn btn-primary btn-sm" onclick="addExcellence()" style="margin-top:12px;">
+          <i class="fas fa-plus"></i> Add Card
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ BLOGS PANEL ═══ -->
+    <div class="panel" id="panel-blogs">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-newspaper"></i> Blog Posts</div>
+        <div class="card-subtitle">Edit blog card content displayed on the homepage.</div>
+        <div class="form-grid" style="margin-bottom:18px;">
+          <div class="form-group">
+            <label class="form-label">Section Label</label>
+            <input class="form-input" id="blogs-label">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Section Title</label>
+            <input class="form-input" id="blogs-title">
+          </div>
+        </div>
+        <div id="blogsContainer"></div>
+        <button class="btn btn-primary btn-sm" onclick="addBlog()" style="margin-top:12px;">
+          <i class="fas fa-plus"></i> Add Blog Post
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ FOOTER PANEL ═══ -->
+    <div class="panel" id="panel-footer">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-shoe-prints"></i> Footer Callback</div>
+        <div class="card-subtitle">The callback section above the footer.</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Label</label>
+            <input class="form-input" id="footerCb-label">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input class="form-input" id="footerCb-title">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Subtitle</label>
+            <textarea class="form-textarea" id="footerCb-subtitle" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Footer Quick Links</div>
+        <div id="footerQuickLinksContainer"></div>
+        <button class="btn btn-primary btn-sm" onclick="addFooterLink('quick')" style="margin-top:10px;">
+          <i class="fas fa-plus"></i> Add Link
+        </button>
+      </div>
+      <div class="card">
+        <div class="card-title">Footer Service Links</div>
+        <div id="footerServiceLinksContainer"></div>
+        <button class="btn btn-primary btn-sm" onclick="addFooterLink('service')" style="margin-top:10px;">
+          <i class="fas fa-plus"></i> Add Link
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg">Changes saved!</span></div>
+
+<script src="business_config.js"></script>
+<script>
+// ═══════════════════════════════════════
+//  ADMIN PANEL — STATE & LOGIC
+// ═══════════════════════════════════════
+
+let config;
+let isDirty = false;
+
+// ── INIT ──
+function init() {
+  config = JSON.parse(JSON.stringify(getActiveConfig()));
+  populateAll();
+}
+
+// ── PANEL SWITCHING ──
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelector(`[data-panel="${name}"]`).classList.add('active');
+  const titles = {
+    theme: "Theme & Colors", brand: "Brand & Contact", nav: "Navigation",
+    hero: "Hero Banner", callback: "Callback Strip", about: "About Us",
+    services: "Services", gallery: "Gallery", why: "Why Choose Us", keyservices: "Key Services",
+    testimonials: "Testimonials", faq: "FAQ", excellence: "Excellence",
+    blogs: "Blogs", footer: "Footer"
+  };
+  document.getElementById('panelTitle').textContent = titles[name] || name;
+}
+
+// ── MARK DIRTY ──
+function markDirty() {
+  isDirty = true;
+  const badge = document.getElementById('statusBadge');
+  badge.className = 'status-badge unsaved';
+  badge.innerHTML = '<span class="dot"></span> Unsaved';
+}
+
+// Listen for all inputs
+document.addEventListener('input', () => markDirty());
+
+// ── SAVE ──
+function saveAll() {
+  collectAll();
+  saveConfig(config);
+  isDirty = false;
+  const badge = document.getElementById('statusBadge');
+  badge.className = 'status-badge saved';
+  badge.innerHTML = '<span class="dot"></span> Saved';
+  showToast('All changes saved successfully!');
+}
+
+// ── RESET ──
+function resetAll() {
+  if (confirm('Reset ALL content to defaults? This cannot be undone.')) {
+    resetConfig();
+    config = JSON.parse(JSON.stringify(BUSINESS_CONFIG));
+    populateAll();
+    isDirty = false;
+    const badge = document.getElementById('statusBadge');
+    badge.className = 'status-badge saved';
+    badge.innerHTML = '<span class="dot"></span> Saved';
+    showToast('Reset to defaults!');
+  }
+}
+
+// ── EXPORT ──
+function exportConfig() {
+  collectAll();
+  const json = JSON.stringify(config, null, 2);
+  const blob = new Blob([`const BUSINESS_CONFIG = ${json};\n\nfunction saveConfig(c){localStorage.setItem("evoke_business_config",JSON.stringify(c))}\nfunction loadConfig(){const s=localStorage.getItem("evoke_business_config");if(s)try{return JSON.parse(s)}catch(e){};return null}\nfunction getActiveConfig(){return loadConfig()||BUSINESS_CONFIG}\nfunction resetConfig(){localStorage.removeItem("evoke_business_config")}`], { type: 'application/javascript' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'business_config.js';
+  a.click();
+  showToast('Config exported!');
+}
+
+// ── PREVIEW ──
+function previewSite() {
+  collectAll();
+  saveConfig(config);
+  // Opens the React app (dev server). For static HTML preview use previewHtml().
+  window.open('http://localhost:5173', '_blank');
+}
+function previewHtml() {
+  collectAll();
+  saveConfig(config);
+  window.open('evoke-event-clone.html', '_blank');
+}
+
+// ── TOAST ──
+function showToast(msg, isError = false) {
+  const toast = document.getElementById('toast');
+  const tmsg = document.getElementById('toastMsg');
+  tmsg.textContent = msg;
+  toast.className = isError ? 'toast error show' : 'toast show';
+  setTimeout(() => { toast.classList.remove('show'); }, 2600);
+}
+
+// ── IMAGE PREVIEW ──
+function updateImgPreview(inputId, previewId) {
+  document.getElementById(previewId).src = document.getElementById(inputId).value;
+}
+
+// ═══════════════════════════════════════
+//  POPULATE FROM CONFIG
+// ═══════════════════════════════════════
+function populateAll() {
+  populateTheme();
+  populateBrand();
+  populateNav();
+  populateHero();
+  populateCallback();
+  populateAbout();
+  populateServices();
+  populateGallery();
+  populateWhy();
+  populateKeyServices();
+  populateTestimonials();
+  populateFaq();
+  populateExcellence();
+  populateBlogs();
+  populateFooter();
+}
+
+// ── THEME ──
+function populateTheme() {
+  const grid = document.getElementById('colorGrid');
+  const preview = document.getElementById('themePreview');
+  const colors = config.theme;
+  const colorLabels = {
+    gold: "Gold", goldLight: "Gold Light", pink: "Pink", pinkDark: "Pink Dark",
+    purple: "Purple", dark: "Dark", text: "Text", lightBg: "Light BG", white: "White"
+  };
+  grid.innerHTML = '';
+  preview.innerHTML = '';
+  Object.keys(colorLabels).forEach(key => {
+    const val = colors[key] || '#000000';
+    grid.innerHTML += `
+      <div class="color-item">
+        <label>${colorLabels[key]}</label>
+        <div class="color-row">
+          <div class="color-swatch" style="background:${val}">
+            <input type="color" value="${val}" id="color-${key}"
+              oninput="this.parentElement.style.background=this.value;document.getElementById('hex-${key}').value=this.value;">
+          </div>
+          <input class="color-hex" id="hex-${key}" value="${val}"
+            oninput="document.getElementById('color-${key}').value=this.value;this.previousElementSibling.style.background=this.value;">
+        </div>
+      </div>`;
+    preview.innerHTML += `<div style="background:${val}">${colorLabels[key]}</div>`;
+  });
+}
+
+// ── BRAND ──
+function populateBrand() {
+  const b = config.brand;
+  document.getElementById('brand-name').value = b.name;
+  document.getElementById('brand-tagline').value = b.tagline;
+  document.getElementById('brand-description').value = b.description;
+  document.getElementById('brand-phone1').value = b.phone1;
+  document.getElementById('brand-phone2').value = b.phone2;
+  document.getElementById('brand-whatsapp').value = b.whatsapp || "";
+  document.getElementById('brand-email1').value = b.email1;
+  document.getElementById('brand-email2').value = b.email2;
+  document.getElementById('brand-address').value = b.address;
+  document.getElementById('brand-copyright').value = b.copyright;
+  const s = config.social;
+  document.getElementById('social-facebook').value = s.facebook;
+  document.getElementById('social-instagram').value = s.instagram;
+  document.getElementById('social-youtube').value = s.youtube;
+  document.getElementById('social-pinterest').value = s.pinterest;
+}
+
+// ── NAV ──
+function populateNav() {
+  document.getElementById('nav-cta').value = config.navCta;
+  renderNavLinks();
+}
+function renderNavLinks() {
+  const c = document.getElementById('navLinksContainer');
+  c.innerHTML = '';
+  config.navLinks.forEach((link, i) => {
+    c.innerHTML += `
+      <div class="repeater-item">
+        <div class="item-header">
+          <span class="item-number">Link ${i+1}</span>
+          <button class="btn-icon" onclick="removeNavLink(${i})"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Label</label>
+            <input class="form-input nav-link-label" value="${link.label}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Href</label>
+            <input class="form-input nav-link-href" value="${link.href}">
+          </div>
+        </div>
+      </div>`;
+  });
+}
+function addNavLink() { config.navLinks.push({ label: "New Link", href: "#" }); renderNavLinks(); markDirty(); }
+function removeNavLink(i) { config.navLinks.splice(i, 1); renderNavLinks(); markDirty(); }
+
+// ── HERO ──
+function populateHero() {
+  renderHeroSlider();
+}
+
+function renderHeroSlider() {
+  const list = document.getElementById('hero-slider-list');
+  list.innerHTML = '';
+  config.hero.sliderImages = config.hero.sliderImages || [];
+  config.hero.sliderImages.forEach((img, i) => {
+    list.innerHTML += `
+      <div class="repeater-item" style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+        <img class="img-preview" id="hero-slider-preview-${i}" src="${img.src}" style="width:60px; height:60px; object-fit:cover;">
+        <div style="flex:1;">
+          <input class="form-input" id="hero-slider-src-${i}" value="${img.src}" oninput="config.hero.sliderImages[${i}].src=this.value; document.getElementById('hero-slider-preview-${i}').src=this.value; markDirty();">
+        </div>
+        <button class="btn btn-danger" onclick="removeHeroSliderImage(${i})"><i class="fas fa-trash"></i></button>
+      </div>`;
+  });
+  attachUploaders();
+}
+
+function addHeroSliderImage() { config.hero.sliderImages = config.hero.sliderImages || []; config.hero.sliderImages.push({ src: "" }); renderHeroSlider(); markDirty(); }
+function removeHeroSliderImage(i) { config.hero.sliderImages.splice(i, 1); renderHeroSlider(); markDirty(); }
+
+// ── CALLBACK ──
+function populateCallback() {
+  const cb = config.callback;
+  document.getElementById('callback-label').value = cb.label;
+  document.getElementById('callback-title').value = cb.title;
+  document.getElementById('callback-subtitle').value = cb.subtitle;
+}
+
+// ── ABOUT ──
+function populateAbout() {
+  const a = config.about;
+  document.getElementById('about-label').value = a.label;
+  document.getElementById('about-title').value = a.title;
+  document.getElementById('about-buttonText').value = a.buttonText;
+  renderAboutParagraphs();
+  renderAboutImages();
+}
+function renderAboutParagraphs() {
+  const c = document.getElementById('aboutParagraphsContainer');
+  c.innerHTML = '';
+  config.about.paragraphs.forEach((p, i) => {
+    c.innerHTML += `
+      <div class="repeater-item">
+        <div class="item-header">
+          <span class="item-number">Paragraph ${i+1}</span>
+          <button class="btn-icon" onclick="removeAboutParagraph(${i})"><i class="fas fa-trash"></i></button>
+        </div>
+        <textarea class="form-textarea about-para" rows="3">${p}</textarea>
+      </div>`;
+  });
+}
+function addAboutParagraph() { config.about.paragraphs.push("New paragraph..."); renderAboutParagraphs(); markDirty(); }
+function removeAboutParagraph(i) { config.about.paragraphs.splice(i, 1); renderAboutParagraphs(); markDirty(); }
+function renderAboutImages() {
+  const c = document.getElementById('aboutImagesContainer');
+  c.innerHTML = '';
+  config.about.images.forEach((img, i) => {
+    c.innerHTML += `
+      <div class="repeater-item">
+        <div class="item-header">
+          <span class="item-number">Image ${i+1}</span>
+        </div>
+        <div class="img-preview-row">
+          <img class="img-preview" src="${img.src}" id="about-img-preview-${i}">
+          <div style="flex:1;">
+            <input class="form-input about-img-src" value="${img.src}" oninput="document.getElementById('about-img-preview-${i}').src=this.value">
+            <input class="form-input about-img-alt" value="${img.alt}" placeholder="Alt text" style="margin-top:8px;">
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+// ── SERVICES ──
+function populateServices() {
+  const s = config.services;
+  document.getElementById('services-label').value = s.label;
+  document.getElementById('services-title').value = s.title;
+  document.getElementById('services-subtitle').value = s.subtitle;
+  renderServiceCards();
+}
+function renderServiceCards() {
+  const c = document.getElementById('serviceCardsContainer');
+  c.innerHTML = '';
+  config.services.items.forEach((item, i) => {
+    c.innerHTML += `
+      <div class="repeater-item">
+        <div class="item-header">
+          <span class="item-number">Service ${i+1}</span>
+          <button class="btn-icon" onclick="removeServiceCard(${i})"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="img-preview-row">
+          <img class="img-preview large" src="${item.image}" id="svc-preview-${i}">
+          <div style="flex:1;">
+            <div class="form-group" style="margin-bottom:8px;">
+              <label class="form-label">Name</label>
+              <input class="form-input svc-name" value="${item.name}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Image URL</label>
+              <input class="form-input svc-image" value="${item.image}" oninput="document.getElementById('svc-preview-${i}').src=this.value">
+            </div>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+function addServiceCard() { config.services.items.push({ name: "NEW SERVICE", image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=500&q=80" }); renderServiceCards(); markDirty(); }
+function removeServiceCard(i) { config.services.items.splice(i, 1); renderServiceCards(); markDirty(); }
+
+// ── GALLERY ──
+function populateGallery() {
+  document.getElementById('gallery-label').value = config.gallery.label;
+  document.getElementById('gallery-title').value = config.gallery.title;
+  renderGallery();
+}
+function renderGallery() {
+  const c = document.getElementById('galleryContainer');
+  c.innerHTML = '';
+  config.gallery.images.forEach((img, i) => {
+    c.innerHTML += `
+      <div class="repeater-item">
+        <div class="item-header">
+          <span class="item-number">Image ${i+1}</span>
+          <button class="btn-icon" onclick="removeGalleryImage(${i})"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="img-preview-row">
+          <img class="img-preview" src="${img.src}" id="gal-img-preview-${i}">
+          <div style="flex:1;">
+            <label class="form-label">Image URL</label>
+            <input class="form-input gal-img-src" value="${img.src}" oninput="document.getElementById('gal-img-preview-${i}').src=this.value">
+          </div>
+        </div>
+      </div>`;
+  });
+}
+function addGalleryImage() { config.gallery.images.push({ src: "images/hero-left.jpg" }); renderGallery(); markDirty(); }
+function removeGalleryImage(i) { config.gallery.images.splice(i, 1); renderGallery(); markDirty(); }
+
+// ── WHY CHOOSE US ──
+function populateWhy() {
+  const w = config.whyChoose;
+  document.getElementById('why-label').value = w.label;
+  document.getElementById('why-title').value = w.title;
+  document.getElementById('why-subtitle').value = w.subtitle;
+  document.getElementById('why-centerImage').value = w.centerImage;
+  document.getElementById('why-center-preview').src = w.centerImage;
+  renderWhyItems('left');
+  renderWhyItems('right');
+}
+function renderWhyItems(side) {
+  const arr = side === 'left' ? config.whyChoose.leftItems : config.whyChoose.rightItems;
+  const c = document.getElementById(side === 'left' ? 'whyLeftContainer' : 'whyRightContainer');
+  c.innerHTML = '';
+  arr.forEach((item, i) => {
+    c.innerHTML += `
+      <div class="repeater-item">
+        <div class="item-header">
+          <span class="item-number">${side === 'left' ? 'Left' : 'Right'} ${i+1}</span>
+          <button class="btn-icon" onclick="removeWhyItem('${side}',${i})"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Icon Class</label>
+            <input class="form-input why-${side}-icon" value="${item.icon}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input class="form-input why-${side}-title" value="${item.title}">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea why-${side}-text" rows="2">${item.text}</textarea>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+function addWhyItem(side) {
+  const arr = side === 'left' ? config.whyChoose.leftItems : config.whyChoose.rightItems;
+  arr.push({ icon: "fas fa-star", title: "NEW FEATURE", text: "Description here..." });
+  renderWhyItems(side); markDirty();
+}
+function removeWhyItem(side, i) {
+  const arr = side === 'left' ? config.whyChoose.leftItems : config.whyChoose.rightItems;
+  arr.splice(i, 1);
+  renderWhyItems(side); markDirty();
+}
+
+// ── KEY SERVICES ──
+function populateKeyServices() {
+  const ks = config.keyServices;
+  document.getElementById('ks-title').value = ks.title;
+  document.getElementById('ks-subtitle').value = ks.subtitle;
+  document.getElementById('ks-description').value = ks.description;
+  document.getElementById('ks-buttonText').value = ks.buttonText;
+  renderKsItems();
+}
+function renderKsItems() {
+  const c = document.getElementById('ksItemsContainer');
+  c.innerHTML = '';
+  config.keyServices.items.forEach((item, i) => {
+    c.innerHTML += `
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+        <input class="form-input ks-item" value="${item}" style="flex:1;">
+        <button class="btn-icon" onclick="removeKsItem(${i})"><i class="fas fa-trash"></i></button>
+      </div>`;
+  });
+}
+function addKsItem() { config.keyServices.items.push("New Service Item"); renderKsItems(); markDirty(); }
+function removeKsItem(i) { config.keyServices.items.splice(i, 1); renderKsItems(); markDirty(); }
+
+// ── TESTIMONIALS ──
+function populateTestimonials() { renderTestimonials(); }
+function renderTestimonials() {
+  const c = document.getElementById('testimonialsContainer');
+  c.innerHTML = '';
+  config.testimonials.forEach((t, i) => {
+    c.innerHTML += `
+      <div class="repeater-item">
+        <div class="item-header">
+          <span class="item-number">Testimonial ${i+1}</span>
+          <button class="btn-icon" onclick="removeTestimonial(${i})"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="img-preview-row" style="margin-bottom:12px;">
+          <img class="img-preview" src="${t.image}" id="test-preview-${i}" style="border-radius:50%;">
+          <div style="flex:1;">
+            <div class="form-group" style="margin-bottom:8px;">
+              <label class="form-label">Photo URL</label>
+              <input class="form-input test-image" value="${t.image}" oninput="document.getElementById('test-preview-${i}').src=this.value">
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Name</label>
+                <input class="form-input test-name" value="${t.name}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Location</label>
+                <input class="form-input test-location" value="${t.location}">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:8px;">
+          <label class="form-label">Stars (1-5)</label>
+          <input class="form-input test-stars" type="number" min="1" max="5" value="${t.stars}" style="width:80px;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Testimonial Text</label>
+          <textarea class="form-textarea test-text" rows="3">${t.text}</textarea>
+        </div>
+      </div>`;
+  });
+}
+function addTestimonial() {
+  config.testimonials.push({ image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80", stars: 5, text: '"Your testimonial here..."', name: "CLIENT NAME", location: "CITY" });
+  renderTestimonials(); markDirty();
+}
+function removeTestimonial(i) { config.testimonials.splice(i, 1); renderTestimonials(); markDirty(); }
+
+// ── FAQ ──
+function populateFaq() { renderFaqs(); }
+function renderFaqs() {
+  const c = document.getElementById('faqContainer');
+  c.innerHTML = '';
+  config.faqs.forEach((f, i) => {
+    c.innerHTML += `
+      <div class="repeater-item">
+        <div class="item-header">
+          <span class="item-number">FAQ ${i+1}</span>
+          <button class="btn-icon" onclick="removeFaq(${i})"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Question</label>
+          <input class="form-input faq-q" value="${f.question}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Answer</label>
+          <textarea class="form-textarea faq-a" rows="2">${f.answer}</textarea>
+        </div>
+      </div>`;
+  });
+}
+function addFaq() { config.faqs.push({ question: "New question?", answer: "Answer here..." }); renderFaqs(); markDirty(); }
+function removeFaq(i) { config.faqs.splice(i, 1); renderFaqs(); markDirty(); }
+
+// ── EXCELLENCE ──
+function populateExcellence() {
+  document.getElementById('excellence-label').value = config.excellence.label;
+  document.getElementById('excellence-title').value = config.excellence.title;
+  renderExcellence();
+}
+function renderExcellence() {
+  const c = document.getElementById('excellenceContainer');
+  c.innerHTML = '';
+  config.excellence.items.forEach((item, i) => {
+    c.innerHTML += `
+      <div class="repeater-item">
+        <div class="item-header">
+          <span class="item-number">Card ${i+1}</span>
+          <button class="btn-icon" onclick="removeExcellence(${i})"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Icon Class</label>
+            <input class="form-input exc-icon" value="${item.icon}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Text</label>
+            <input class="form-input exc-text" value="${item.text}">
+          </div>
+        </div>
+      </div>`;
+  });
+}
+function addExcellence() { config.excellence.items.push({ icon: "fas fa-star", text: "NEW FEATURE" }); renderExcellence(); markDirty(); }
+function removeExcellence(i) { config.excellence.items.splice(i, 1); renderExcellence(); markDirty(); }
+
+// ── BLOGS ──
+function populateBlogs() {
+  document.getElementById('blogs-label').value = config.blogs.label;
+  document.getElementById('blogs-title').value = config.blogs.title;
+  renderBlogs();
+}
+function renderBlogs() {
+  const c = document.getElementById('blogsContainer');
+  c.innerHTML = '';
+  config.blogs.items.forEach((b, i) => {
+    c.innerHTML += `
+      <div class="repeater-item">
+        <div class="item-header">
+          <span class="item-number">Blog ${i+1}</span>
+          <button class="btn-icon" onclick="removeBlog(${i})"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="img-preview-row" style="margin-bottom:12px;">
+          <img class="img-preview large" src="${b.image}" id="blog-preview-${i}">
+          <div style="flex:1;">
+            <div class="form-group" style="margin-bottom:8px;">
+              <label class="form-label">Image URL</label>
+              <input class="form-input blog-image" value="${b.image}" oninput="document.getElementById('blog-preview-${i}').src=this.value">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tag</label>
+              <input class="form-input blog-tag" value="${b.tag}">
+            </div>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:8px;">
+          <label class="form-label">Heading</label>
+          <input class="form-input blog-heading" value="${b.heading}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Excerpt</label>
+          <textarea class="form-textarea blog-excerpt" rows="2">${b.excerpt}</textarea>
+        </div>
+      </div>`;
+  });
+}
+function addBlog() {
+  config.blogs.items.push({ image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=500&q=80", tag: "NEW", heading: "Blog Title", excerpt: "Blog excerpt..." });
+  renderBlogs(); markDirty();
+}
+function removeBlog(i) { config.blogs.items.splice(i, 1); renderBlogs(); markDirty(); }
+
+// ── FOOTER ──
+function populateFooter() {
+  const fc = config.footerCallback;
+  document.getElementById('footerCb-label').value = fc.label;
+  document.getElementById('footerCb-title').value = fc.title;
+  document.getElementById('footerCb-subtitle').value = fc.subtitle;
+  renderFooterLinks('quick');
+  renderFooterLinks('service');
+}
+function renderFooterLinks(type) {
+  const arr = type === 'quick' ? config.footerQuickLinks : config.footerServiceLinks;
+  const c = document.getElementById(type === 'quick' ? 'footerQuickLinksContainer' : 'footerServiceLinksContainer');
+  c.innerHTML = '';
+  arr.forEach((link, i) => {
+    c.innerHTML += `
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+        <input class="form-input fl-${type}-label" value="${link.label}" style="flex:1;">
+        <input class="form-input fl-${type}-href" value="${link.href}" style="flex:1;">
+        <button class="btn-icon" onclick="removeFooterLink('${type}',${i})"><i class="fas fa-trash"></i></button>
+      </div>`;
+  });
+}
+function addFooterLink(type) {
+  const arr = type === 'quick' ? config.footerQuickLinks : config.footerServiceLinks;
+  arr.push({ label: "New Link", href: "#" });
+  renderFooterLinks(type); markDirty();
+}
+function removeFooterLink(type, i) {
+  const arr = type === 'quick' ? config.footerQuickLinks : config.footerServiceLinks;
+  arr.splice(i, 1);
+  renderFooterLinks(type); markDirty();
+}
+
+// ═══════════════════════════════════════
+//  COLLECT ALL INPUTS → CONFIG
+// ═══════════════════════════════════════
+function collectAll() {
+  // Theme
+  const colorKeys = ['gold','goldLight','pink','pinkDark','purple','dark','text','lightBg','white'];
+  colorKeys.forEach(k => { config.theme[k] = document.getElementById('hex-' + k).value; });
+
+  // Brand
+  config.brand.name = document.getElementById('brand-name').value;
+  config.brand.tagline = document.getElementById('brand-tagline').value;
+  config.brand.description = document.getElementById('brand-description').value;
+  config.brand.phone1 = document.getElementById('brand-phone1').value;
+  config.brand.phone2 = document.getElementById('brand-phone2').value;
+  config.brand.whatsapp = document.getElementById('brand-whatsapp').value;
+  config.brand.email1 = document.getElementById('brand-email1').value;
+  config.brand.email2 = document.getElementById('brand-email2').value;
+  config.brand.address = document.getElementById('brand-address').value;
+  config.brand.copyright = document.getElementById('brand-copyright').value;
+
+  // Social
+  config.social.facebook = document.getElementById('social-facebook').value;
+  config.social.instagram = document.getElementById('social-instagram').value;
+  config.social.youtube = document.getElementById('social-youtube').value;
+  config.social.pinterest = document.getElementById('social-pinterest').value;
+
+  // Nav
+  config.navCta = document.getElementById('nav-cta').value;
+  const navLabels = document.querySelectorAll('.nav-link-label');
+  const navHrefs = document.querySelectorAll('.nav-link-href');
+  config.navLinks = Array.from(navLabels).map((el, i) => ({ label: el.value, href: navHrefs[i].value }));
+
+  // Hero
+  // Slider handles its own state
+
+  // Callback
+  config.callback.label = document.getElementById('callback-label').value;
+  config.callback.title = document.getElementById('callback-title').value;
+  config.callback.subtitle = document.getElementById('callback-subtitle').value;
+
+  // About
+  config.about.label = document.getElementById('about-label').value;
+  config.about.title = document.getElementById('about-title').value;
+  config.about.buttonText = document.getElementById('about-buttonText').value;
+  config.about.paragraphs = Array.from(document.querySelectorAll('.about-para')).map(el => el.value);
+  const aboutSrcs = document.querySelectorAll('.about-img-src');
+  const aboutAlts = document.querySelectorAll('.about-img-alt');
+  config.about.images = Array.from(aboutSrcs).map((el, i) => ({ src: el.value, alt: aboutAlts[i].value }));
+
+  // Services
+  config.services.label = document.getElementById('services-label').value;
+  config.services.title = document.getElementById('services-title').value;
+  config.services.subtitle = document.getElementById('services-subtitle').value;
+  const svcNames = document.querySelectorAll('.svc-name');
+  const svcImages = document.querySelectorAll('.svc-image');
+  config.services.items = Array.from(svcNames).map((el, i) => ({ name: el.value, image: svcImages[i].value }));
+
+  // Gallery
+  config.gallery.label = document.getElementById('gallery-label').value;
+  config.gallery.title = document.getElementById('gallery-title').value;
+  const galSrcs = document.querySelectorAll('.gal-img-src');
+  config.gallery.images = Array.from(galSrcs).map(el => ({ src: el.value }));
+
+  // Why
+  config.whyChoose.label = document.getElementById('why-label').value;
+  config.whyChoose.title = document.getElementById('why-title').value;
+  config.whyChoose.subtitle = document.getElementById('why-subtitle').value;
+  config.whyChoose.centerImage = document.getElementById('why-centerImage').value;
+  ['left', 'right'].forEach(side => {
+    const icons = document.querySelectorAll(`.why-${side}-icon`);
+    const titles = document.querySelectorAll(`.why-${side}-title`);
+    const texts = document.querySelectorAll(`.why-${side}-text`);
+    const arr = Array.from(icons).map((el, i) => ({ icon: el.value, title: titles[i].value, text: texts[i].value }));
+    if (side === 'left') config.whyChoose.leftItems = arr;
+    else config.whyChoose.rightItems = arr;
+  });
+
+  // Key Services
+  config.keyServices.title = document.getElementById('ks-title').value;
+  config.keyServices.subtitle = document.getElementById('ks-subtitle').value;
+  config.keyServices.description = document.getElementById('ks-description').value;
+  config.keyServices.buttonText = document.getElementById('ks-buttonText').value;
+  config.keyServices.items = Array.from(document.querySelectorAll('.ks-item')).map(el => el.value);
+
+  // Testimonials
+  const testImages = document.querySelectorAll('.test-image');
+  const testNames = document.querySelectorAll('.test-name');
+  const testLocs = document.querySelectorAll('.test-location');
+  const testStars = document.querySelectorAll('.test-stars');
+  const testTexts = document.querySelectorAll('.test-text');
+  config.testimonials = Array.from(testImages).map((el, i) => ({
+    image: el.value, name: testNames[i].value, location: testLocs[i].value,
+    stars: parseInt(testStars[i].value) || 5, text: testTexts[i].value
+  }));
+
+  // FAQ
+  const faqQs = document.querySelectorAll('.faq-q');
+  const faqAs = document.querySelectorAll('.faq-a');
+  config.faqs = Array.from(faqQs).map((el, i) => ({ question: el.value, answer: faqAs[i].value }));
+
+  // Excellence
+  config.excellence.label = document.getElementById('excellence-label').value;
+  config.excellence.title = document.getElementById('excellence-title').value;
+  const excIcons = document.querySelectorAll('.exc-icon');
+  const excTexts = document.querySelectorAll('.exc-text');
+  config.excellence.items = Array.from(excIcons).map((el, i) => ({ icon: el.value, text: excTexts[i].value }));
+
+  // Blogs
+  config.blogs.label = document.getElementById('blogs-label').value;
+  config.blogs.title = document.getElementById('blogs-title').value;
+  const blogImages = document.querySelectorAll('.blog-image');
+  const blogTags = document.querySelectorAll('.blog-tag');
+  const blogHeadings = document.querySelectorAll('.blog-heading');
+  const blogExcerpts = document.querySelectorAll('.blog-excerpt');
+  config.blogs.items = Array.from(blogImages).map((el, i) => ({
+    image: el.value, tag: blogTags[i].value, heading: blogHeadings[i].value, excerpt: blogExcerpts[i].value
+  }));
+
+  // Footer
+  config.footerCallback.label = document.getElementById('footerCb-label').value;
+  config.footerCallback.title = document.getElementById('footerCb-title').value;
+  config.footerCallback.subtitle = document.getElementById('footerCb-subtitle').value;
+
+  // Footer links
+  const flqLabels = document.querySelectorAll('.fl-quick-label');
+  const flqHrefs = document.querySelectorAll('.fl-quick-href');
+  config.footerQuickLinks = Array.from(flqLabels).map((el, i) => ({ label: el.value, href: flqHrefs[i].value }));
+  const flsLabels = document.querySelectorAll('.fl-service-label');
+  const flsHrefs = document.querySelectorAll('.fl-service-href');
+  config.footerServiceLinks = Array.from(flsLabels).map((el, i) => ({ label: el.value, href: flsHrefs[i].value }));
+}
+
+// ── Responsive menu toggle ──
+function checkMobile() {
+  const btn = document.getElementById('menuToggle');
+  if (window.innerWidth <= 900) btn.style.display = 'flex';
+  else btn.style.display = 'none';
+}
+window.addEventListener('resize', checkMobile);
+checkMobile();
+
+// ── AUTO-ATTACH UPLOADERS ──
+function attachUploaders() {
+  document.querySelectorAll('input.form-input').forEach(input => {
+    const isImageField = input.id.includes('Image') || 
+                         input.classList.contains('about-img-src') || 
+                         input.classList.contains('svc-image') || 
+                         input.classList.contains('test-image') || 
+                         input.classList.contains('gal-img-src') || 
+                         input.classList.contains('blog-image');
+    if (isImageField) {
+      if (input.nextElementSibling && input.nextElementSibling.classList.contains('file-uploader')) return;
+      
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.className = 'file-uploader';
+      fileInput.style.marginTop = '6px';
+      fileInput.style.marginBottom = '6px';
+      fileInput.style.fontSize = '0.7rem';
+      fileInput.style.display = 'block';
+      
+      fileInput.onchange = function() {
+        if (this.files && this.files[0]) {
+          const file = this.files[0];
+          const oldText = input.value;
+          input.value = "Compressing image...";
+          
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+              const canvas = document.createElement('canvas');
+              const MAX = 1200;
+              let w = img.width, h = img.height;
+              if (w > MAX) { h = h * (MAX/w); w = MAX; }
+              canvas.width = w; canvas.height = h;
+              canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+              
+              try {
+                const b64 = canvas.toDataURL('image/jpeg', 0.8);
+                input.value = b64;
+                input.dispatchEvent(new Event('input')); // trigger preview and save state
+              } catch(err) {
+                alert("Image too large or error compressing.");
+                input.value = oldText;
+              }
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      
+      input.parentNode.insertBefore(fileInput, input.nextSibling);
+    }
+  });
+}
+
+const originalPopulateAll = populateAll;
+populateAll = function() { originalPopulateAll(); attachUploaders(); };
+
+const originalRenderAboutImages = renderAboutImages;
+renderAboutImages = function() { originalRenderAboutImages(); attachUploaders(); };
+
+const originalRenderServiceCards = renderServiceCards;
+renderServiceCards = function() { originalRenderServiceCards(); attachUploaders(); };
+
+const originalRenderGallery = renderGallery;
+renderGallery = function() { originalRenderGallery(); attachUploaders(); };
+
+const originalRenderTestimonials = renderTestimonials;
+renderTestimonials = function() { originalRenderTestimonials(); attachUploaders(); };
+
+const originalRenderBlogs = renderBlogs;
+renderBlogs = function() { originalRenderBlogs(); attachUploaders(); };
+
+// ── INIT ──
+init();
+</script>
+</body>
+</html>

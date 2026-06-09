@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Evoke Event & Wedding Planners</title>
+<link id="font-primary-link" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link id="font-heading-link" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link id="font-accent-link" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --pink: #f3d6e4;
+    --pink-dark: #d4a0bc;
+    --purple: #7b2d8b;
+    --dark: #1a1a1a;
+    --text: #444;
+    --light-bg: #fdf6fb;
+    --white: #fff;
+    --font-primary: 'Montserrat', sans-serif;
+    --font-heading: 'Cormorant Garamond', serif;
+    --font-accent: 'Great Vibes', cursive;
+  }
+
+  body { font-family: var(--font-primary); color: var(--text); overflow-x: hidden; }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 1000;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 40px;
+  }
+  .hamburger { display: none; font-size: 1.5rem; cursor: pointer; color: var(--dark); }
+  .nav-logo { display: flex; flex-direction: column; align-items: center; }
+  .nav-logo .logo-name {
+    font-family: var(--font-accent);
+    font-size: 1.8rem; color: var(--purple); line-height: 1;
+  }
+  .nav-logo .logo-sub {
+    font-size: 0.55rem; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-top: 2px;
+  }
+  .nav-links { display: flex; gap: 24px; list-style: none; }
+  .nav-links a {
+    text-decoration: none; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--dark);
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--purple); }
+  .nav-cta {
+    background: var(--purple); color: #fff;
+    padding: 9px 20px; border: none; border-radius: 3px;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; cursor: pointer; transition: background .2s;
+  }
+  .nav-cta:hover { background: #5c1f6b; }
+
+  /* ── HERO BANNER ── */
+  .hero {
+    display: grid; grid-template-columns: 1fr 2fr 1fr;
+    height: 420px; overflow: hidden;
+  }
+  .hero-img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: brightness(.92);
+  }
+  .hero-center { position: relative; }
+  .hero-center img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,.05), rgba(0,0,0,.25));
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: var(--font-accent);
+    font-size: 1.3rem; color: var(--gold);
+    display: block; text-align: center; margin-bottom: 4px;
+  }
+  .section-title {
+    font-family: var(--font-heading);
+    font-size: 2.2rem; font-weight: 600; letter-spacing: 4px;
+    text-align: center; text-transform: uppercase; color: var(--dark);
+    white-space: pre-line;
+  }
+  .divider {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin: 10px auto 0;
+  }
+  .divider span { width: 40px; height: 1px; background: var(--gold); display: block; }
+  .divider i { color: var(--gold); font-size: .65rem; }
+
+  /* ── CALL BACK STRIP ── */
+  .callback-strip {
+    background: #fff; padding: 50px 20px;
+    text-align: center;
+  }
+  .callback-strip p { font-size: .75rem; color: #888; letter-spacing: 1px; margin-bottom: 22px; }
+  .callback-form {
+    display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 20px;
+  }
+  .callback-form input {
+    padding: 10px 18px; border: 1px solid #ddd; border-radius: 3px;
+    font-size: .78rem; font-family: var(--font-primary);
+    width: 200px; outline: none;
+  }
+  .callback-form input:focus { border-color: var(--purple); }
+  .btn-submit {
+    background: var(--purple); color: #fff;
+    padding: 10px 28px; border: none; border-radius: 3px;
+    font-size: .78rem; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; cursor: pointer;
+  }
+
+  /* ── ABOUT ── */
+  .about-section {
+    background: var(--light-bg); padding: 70px 40px;
+    display: flex; align-items: center; gap: 50px; max-width: 1100px; margin: 0 auto;
+  }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6px; flex: 0 0 380px;
+  }
+  .about-grid img {
+    width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px;
+  }
+  .about-text h3 { font-size: .72rem; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+  .about-text .section-title { text-align: left; font-size: 1.8rem; margin-bottom: 16px; }
+  .about-text p { font-size: .8rem; line-height: 1.9; color: #666; margin-bottom: 12px; }
+  .btn-more {
+    display: inline-block; margin-top: 16px;
+    border: 1px solid var(--purple); color: var(--purple);
+    padding: 9px 24px; font-size: .72rem; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none;
+    transition: all .2s; cursor: pointer; background: transparent;
+  }
+  .btn-more:hover { background: var(--purple); color: #fff; }
+
+  /* ── SERVICES ── */
+  .services-section { background: var(--light-bg); padding: 60px 40px; text-align: center; }
+  .services-section .section-label { margin-bottom: 4px; }
+  .services-section > p { font-size: .76rem; color: #888; max-width: 700px; margin: 16px auto 36px; line-height: 1.8; }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px; max-width: 1000px; margin: 0 auto;
+  }
+  .service-card {
+    position: relative; overflow: hidden; border-radius: 2px;
+    aspect-ratio: 4/3; cursor: pointer;
+  }
+  .service-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+  .service-card:hover img { transform: scale(1.06); }
+  .service-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,.7));
+    color: #fff; padding: 30px 12px 12px;
+    font-size: .7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  }
+
+  /* ── CONTACT STRIP ── */
+  .contact-strip { padding: 60px 40px; text-align: center; background: #fff; }
+  .contact-strip .section-title { font-size: 2rem; margin-bottom: 8px; }
+  .contact-strip > p { font-size: .76rem; color: #888; max-width: 700px; margin: 16px auto 40px; line-height: 1.8; }
+  .contact-icons { display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; }
+  .contact-item { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .contact-icon-wrap {
+    width: 60px; height: 60px; border-radius: 50%;
+    border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center;
+    color: var(--gold); font-size: 1.2rem;
+  }
+  .contact-item p { font-size: .7rem; color: #555; text-align: center; line-height: 1.6; white-space: pre-line; }
+
+  /* ── WHY CHOOSE US ── */
+  .why-section { background: var(--light-bg); padding: 60px 40px; }
+  .why-section .section-title { margin-bottom: 6px; text-align: center; }
+  .why-inner {
+    max-width: 1100px; margin: 40px auto 0;
+    display: grid; grid-template-columns: 1fr 340px 1fr; gap: 30px; align-items: center;
+  }
+  .why-col { display: flex; flex-direction: column; gap: 28px; }
+  .why-item { display: flex; align-items: flex-start; gap: 14px; }
+  .why-item.right { flex-direction: row-reverse; text-align: right; }
+  .why-icon { color: var(--gold); font-size: 1.4rem; flex-shrink: 0; margin-top: 4px; }
+  .why-item h4 { font-size: .78rem; font-weight: 700; letter-spacing: 1px; color: var(--dark); margin-bottom: 6px; }
+  .why-item p { font-size: .72rem; color: #777; line-height: 1.7; }
+  .why-center-img { width: 100%; border-radius: 4px; }
+
+  /* ── KEY SERVICES LIST ── */
+  .key-services { background: #fff; padding: 60px 40px; }
+  .key-services-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  .key-services h2 { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; color: var(--dark); line-height: 1.2; margin-bottom: 12px; }
+  .key-services h2 span { color: var(--purple); display: block; font-size: 1rem; font-style: italic; }
+  .key-services-text p { font-size: .76rem; color: #777; line-height: 1.8; margin-bottom: 20px; }
+  .ks-list { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; }
+  .ks-list li { font-size: .73rem; color: #555; display: flex; align-items: center; gap: 8px; }
+  .ks-list li::before { content: '✦'; color: var(--gold); font-size: .5rem; }
+
+  /* ── TESTIMONIAL ── */
+  .testimonial-section { background: var(--dark); padding: 70px 40px; text-align: center; }
+  .testimonial-section .section-title { color: #fff; margin-bottom: 30px; }
+  .testimonial-section .section-label { color: var(--gold-light); }
+  .testimonial-card { max-width: 750px; margin: 0 auto; display: none; }
+  .testimonial-card.active { display: block; }
+  .testimonial-img {
+    width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
+    border: 3px solid var(--gold); margin: 0 auto 20px;
+  }
+  .stars { color: var(--gold); font-size: .9rem; margin-bottom: 14px; }
+  .testimonial-card p { font-size: .82rem; color: #ccc; line-height: 1.9; font-style: italic; margin-bottom: 18px; }
+  .testimonial-card h4 { color: #fff; font-size: .78rem; font-weight: 700; letter-spacing: 1px; }
+  .testimonial-dots { display: flex; justify-content: center; gap: 8px; margin-top: 24px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #555; cursor: pointer; }
+  .dot.active { background: var(--gold); }
+
+  /* ── FAQ ── */
+  .faq-section { background: #fff; padding: 60px 40px; text-align: center; }
+  .faq-section .section-title { margin-bottom: 8px; }
+  .faq-list { max-width: 750px; margin: 36px auto 0; text-align: left; }
+  .faq-item { border-bottom: 1px solid #eee; }
+  .faq-q {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 0; cursor: pointer;
+    font-size: .78rem; font-weight: 600; color: var(--dark);
+  }
+  .faq-q i { color: var(--gold); transition: transform .3s; }
+  .faq-q.open i { transform: rotate(45deg); }
+  .faq-a { font-size: .75rem; color: #777; line-height: 1.8; padding-bottom: 16px; display: none; }
+  .faq-a.show { display: block; }
+
+  /* ── EVOKE EXCELLENCE ── */
+  .excellence-section { background: var(--dark); padding: 60px 40px; text-align: center; }
+  .excellence-section .section-title { color: #fff; }
+  .excellence-section .section-label { color: var(--gold-light); }
+  .excellence-grid {
+    display: flex; justify-content: center; gap: 10px;
+    flex-wrap: wrap; margin-top: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;
+  }
+  .excellence-card {
+    background: #2a2a2a; padding: 28px 20px; border-radius: 4px;
+    flex: 0 0 140px; display: flex; flex-direction: column; align-items: center; gap: 10px;
+    border: 1px solid #333; transition: border-color .2s;
+  }
+  .excellence-card:hover { border-color: var(--gold); }
+  .excellence-card i { font-size: 1.6rem; color: var(--gold); }
+  .excellence-card p { font-size: .68rem; color: #bbb; text-align: center; letter-spacing: .5px; line-height: 1.5; }
+
+  /* ── BLOGS ── */
+  .blogs-section { background: var(--light-bg); padding: 60px 40px; text-align: center; }
+  .blogs-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 20px; max-width: 1000px; margin: 36px auto 0;
+  }
+  .blog-card { background: #fff; border-radius: 4px; overflow: hidden; text-align: left; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  .blog-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+  .blog-card-body { padding: 18px; }
+  .blog-tag { font-size: .62rem; color: var(--purple); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .blog-card h4 { font-size: .8rem; font-weight: 700; color: var(--dark); line-height: 1.5; margin-bottom: 10px; }
+  .blog-card p { font-size: .72rem; color: #888; line-height: 1.7; }
+  .read-more { font-size: .68rem; color: var(--purple); font-weight: 700; text-decoration: none; display: inline-block; margin-top: 12px; letter-spacing: 1px; }
+
+  /* ── FOOTER CALLBACK ── */
+  .footer-callback { background: var(--dark); padding: 60px 40px; text-align: center; }
+  .footer-callback .section-title { color: #fff; }
+  .footer-callback .section-label { color: var(--gold-light); }
+  .footer-callback p { font-size: .76rem; color: #bbb; max-width: 600px; margin: 14px auto 28px; line-height: 1.8; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #111; color: #bbb;
+    padding: 50px 40px 24px;
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 40px; max-width: 1100px; margin: 0 auto 40px;
+  }
+  .footer-brand .logo-name { font-family: var(--font-accent); font-size: 2rem; color: #fff; }
+  .footer-brand .logo-sub { font-size: .5rem; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
+  .footer-brand p { font-size: .72rem; line-height: 1.8; margin-top: 14px; }
+  .footer-col h5 { font-size: .7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #fff; margin-bottom: 16px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .footer-col ul li a { font-size: .72rem; color: #bbb; text-decoration: none; transition: color .2s; }
+  .footer-col ul li a:hover { color: var(--gold); }
+  .footer-col p { font-size: .72rem; line-height: 1.8; white-space: pre-line; }
+  .social-icons { display: flex; gap: 10px; margin-top: 16px; }
+  .social-icons a {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid #444; display: flex; align-items: center; justify-content: center;
+    color: #bbb; font-size: .8rem; transition: all .2s;
+  }
+  .social-icons a:hover { border-color: var(--gold); color: var(--gold); }
+  .footer-bottom {
+    border-top: 1px solid #222; padding-top: 20px;
+    text-align: center; font-size: .68rem; color: #666;
+    max-width: 1100px; margin: 0 auto;
+  }
+
+  /* ── FLOATING WHATSAPP ── */
+  .floating-wa {
+    position: fixed; bottom: 30px; left: 30px; z-index: 999;
+    background: #25D366; color: #fff; width: 60px; height: 60px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; box-shadow: 0 4px 12px rgba(37,211,102,0.4);
+    transition: transform 0.3s; text-decoration: none;
+  }
+  .floating-wa:hover { transform: scale(1.1); }
+
+  /* ── GALLERY ── */
+  .gallery-section { background: #fff; padding: 60px 40px; text-align: center; }
+  .gallery-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px; max-width: 1100px; margin: 36px auto 0;
+  }
+  .gallery-item { aspect-ratio: 1; overflow: hidden; border-radius: 4px; cursor: pointer; }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+  .gallery-item:hover img { transform: scale(1.08); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width: 900px) {
+    .hamburger { display: block; z-index: 1001; }
+    .nav-links {
+      position: fixed; top: 0; right: -100%; width: 250px; height: 100vh;
+      background: #fff; flex-direction: column; padding: 80px 30px 30px;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: right 0.3s ease;
+      z-index: 1000;
+    }
+    .nav-links.active { right: 0; display: flex; }
+    .hero { grid-template-columns: 0 1fr 0; }
+    .hero img:first-child, .hero img:last-child { display: none; }
+    .about-section { flex-direction: column; }
+    .services-grid { grid-template-columns: repeat(2,1fr); }
+    .why-inner { grid-template-columns: 1fr; }
+    .why-center-img { max-width: 320px; margin: 0 auto; }
+    .key-services-inner { grid-template-columns: 1fr; }
+    .blogs-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="logo-name" id="logo-name">Evoke Event</span>
+    <span class="logo-sub" id="logo-sub">& Wedding Planners</span>
+  </div>
+  <ul class="nav-links" id="nav-links"></ul>
+  <div style="display:flex; align-items:center; gap:16px;">
+    <button class="nav-cta" id="nav-cta">Book Appointment</button>
+    <div class="hamburger" id="hamburger"><i class="fas fa-bars"></i></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-center" id="hero-center-container" style="position:relative;">
+    <div class="hero-overlay" style="z-index: 2;"></div>
+  </div>
+</div>
+
+<!-- REQUEST CALLBACK -->
+<section class="callback-strip" id="contact">
+  <span class="section-label" id="cb-label"></span>
+  <h2 class="section-title" id="cb-title"></h2>
+  <div class="divider"><span></span><i class="fas fa-diamond"></i><span></span></div>
+  <p style="margin-top:16px;" id="cb-subtitle"></p>
+  <form class="callback-form" id="first-callback-form">
+    <input type="text" placeholder="Name" required id="cb-name">
+    <input type="tel" placeholder="Phone" required id="cb-phone">
+    <input type="email" placeholder="Email" id="cb-email">
+    <button type="submit" class="btn-submit" id="cb-submit">SUBMIT</button>
+  </form>
+</section>
+
+<!-- ABOUT -->
+<section style="background: var(--light-bg); padding: 60px 40px;" id="about">
+  <div class="about-section" style="padding:0;">
+    <div class="about-grid" id="about-images"></div>
+    <div class="about-text">
+      <h3 id="about-label"></h3>
+      <h2 class="section-title" style="text-align:left; font-size:1.8rem;" id="about-title"></h2>
+      <div class="divider" style="justify-content:flex-start; margin-left:0;"><span></span><i class="fas fa-diamond"></i><span></span></div>
+      <div id="about-paragraphs" style="margin-top:18px;"></div>
+      <button class="btn-more" id="about-btn"></button>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services-section" id="services">
+  <span class="section-label" id="svc-label"></span>
+  <h2 class="section-title" id="svc-title"></h2>
+  <div class="divider"><span></span><i class="fas fa-diamond"></i><span></span></div>
+  <p id="svc-subtitle"></p>
+  <div class="services-grid" id="services-grid"></div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery-section" id="gallery">
+  <span class="section-label" id="gal-label"></span>
+  <h2 class="section-title" id="gal-title"></h2>
+  <div class="divider"><span></span><i class="fas fa-diamond"></i><span></span></div>
+  <div class="gallery-grid" id="gallery-grid"></div>
+</section>
+
+<!-- CONTACT STRIP -->
+<section class="contact-strip">
+  <span class="section-label" id="contact-label"></span>
+  <h2 class="section-title" id="contact-title"></h2>
+  <div class="divider"><span></span><i class="fas fa-diamond"></i><span></span></div>
+  <p id="contact-subtitle"></p>
+  <div class="contact-icons">
+    <div class="contact-item">
+      <div class="contact-icon-wrap"><i class="fas fa-map-marker-alt"></i></div>
+      <p id="contact-address"></p>
+    </div>
+    <div class="contact-item">
+      <div class="contact-icon-wrap"><i class="fas fa-phone-alt"></i></div>
+      <p id="contact-phones"></p>
+    </div>
+    <div class="contact-item">
+      <div class="contact-icon-wrap"><i class="fas fa-envelope"></i></div>
+      <p id="contact-emails"></p>
+    </div>
+  </div>
+</section>
+
+<!-- WHY CHOOSE US -->
+<section class="why-section" id="why">
+  <span class="section-label" id="why-label"></span>
+  <h2 class="section-title" id="why-title"></h2>
+  <div class="divider"><span></span><i class="fas fa-diamond"></i><span></span></div>
+  <p style="text-align:center; font-size:.76rem; color:#888; max-width:700px; margin:14px auto 0; line-height:1.8;" id="why-subtitle"></p>
+  <div class="why-inner">
+    <div class="why-col" id="why-left"></div>
+    <img class="why-center-img" id="why-img" src="" alt="Why Choose Us">
+    <div class="why-col" id="why-right"></div>
+  </div>
+</section>
+
+<!-- KEY SERVICES -->
+<section class="key-services">
+  <div class="key-services-inner">
+    <div class="key-services-text">
+      <h2><span style="display:inline;font-style:normal;font-size:2rem;color:var(--dark);" id="ks-title"></span><br><span id="ks-subtitle"></span></h2>
+      <p id="ks-desc"></p>
+      <button class="btn-more" id="ks-btn"></button>
+    </div>
+    <ul class="ks-list" id="ks-list"></ul>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testimonial-section">
+  <span class="section-label" style="color:var(--gold-light);">Beautiful Bride, Sweet Groom</span>
+  <h2 class="section-title" style="color:#fff;">TESTIMONIAL</h2>
+  <div class="divider"><span style="background:var(--gold-light);"></span><i class="fas fa-diamond" style="color:var(--gold-light);"></i><span style="background:var(--gold-light);"></span></div>
+  <div id="testimonials-wrapper"></div>
+  <div class="testimonial-dots" id="testimonial-dots"></div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <span class="section-label">Beautiful Bride, Sweet Groom</span>
+  <h2 class="section-title">FREQUENTLY ASKED<br>QUESTIONS</h2>
+  <div class="divider"><span></span><i class="fas fa-diamond"></i><span></span></div>
+  <div class="faq-list" id="faq-list"></div>
+</section>
+
+<!-- EVOKE EXCELLENCE -->
+<section class="excellence-section">
+  <span class="section-label" style="color:var(--gold-light);" id="exc-label"></span>
+  <h2 class="section-title" style="color:#fff;" id="exc-title"></h2>
+  <div class="divider"><span style="background:var(--gold-light);"></span><i class="fas fa-diamond" style="color:var(--gold-light);"></i><span style="background:var(--gold-light);"></span></div>
+  <div class="excellence-grid" id="exc-grid"></div>
+</section>
+
+<!-- BLOGS -->
+<section class="blogs-section" id="blogs">
+  <span class="section-label" id="blogs-label"></span>
+  <h2 class="section-title" id="blogs-title"></h2>
+  <div class="divider"><span></span><i class="fas fa-diamond"></i><span></span></div>
+  <div class="blogs-grid" id="blogs-grid"></div>
+</section>
+
+<!-- FOOTER CALLBACK -->
+<section class="footer-callback">
+  <span class="section-label" style="color:var(--gold-light);" id="fcb-label"></span>
+  <h2 class="section-title" style="color:#fff;" id="fcb-title"></h2>
+  <div class="divider"><span style="background:var(--gold-light);"></span><i class="fas fa-diamond" style="color:var(--gold-light);"></i><span style="background:var(--gold-light);"></span></div>
+  <p id="fcb-subtitle"></p>
+  <form class="callback-form" id="second-callback-form">
+    <input type="text" placeholder="Name" style="background:rgba(255,255,255,.1); border-color:#444; color:#fff;" required id="fcb-name">
+    <input type="tel" placeholder="Phone" style="background:rgba(255,255,255,.1); border-color:#444; color:#fff;" required id="fcb-phone">
+    <input type="email" placeholder="Email" style="background:rgba(255,255,255,.1); border-color:#444; color:#fff;" id="fcb-email">
+    <button type="submit" class="btn-submit" id="fcb-submit">SUBMIT</button>
+  </form>
+</section>
+
+<!-- FLOATING WHATSAPP -->
+<a href="#" class="floating-wa" id="floating-wa" target="_blank">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo-name" id="f-logo-name"></div>
+      <div class="logo-sub" id="f-logo-sub"></div>
+      <p id="f-desc"></p>
+      <div class="social-icons">
+        <a href="#" id="soc-fb"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" id="soc-ig"><i class="fab fa-instagram"></i></a>
+        <a href="#" id="soc-yt"><i class="fab fa-youtube"></i></a>
+        <a href="#" id="soc-pin"><i class="fab fa-pinterest-p"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Quick Links</h5>
+      <ul id="f-quick"></ul>
+    </div>
+    <div class="footer-col">
+      <h5>Our Services</h5>
+      <ul id="f-services"></ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact Us</h5>
+      <p id="f-contact-addr"></p>
+      <p style="margin-top:10px;" id="f-contact-phones"></p>
+      <p style="margin-top:10px;" id="f-contact-emails"></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p id="f-copyright"></p>
+  </div>
+</footer>
+
+<script src="business_config.js"></script>
+<script>
+  function renderSite() {
+    const config = typeof getActiveConfig === 'function' ? getActiveConfig() : BUSINESS_CONFIG;
+    if (!config) return;
+
+    // Apply Theme
+    const root = document.documentElement;
+    if (config.theme) {
+      Object.keys(config.theme).forEach(key => {
+        let cssKey = key.replace(/([A-Z])/g, "-$1").toLowerCase();
+        root.style.setProperty(`--${cssKey}`, config.theme[key]);
+      });
+    }
+
+    // Nav
+    if (config.brand) {
+      document.getElementById('logo-name').textContent = config.brand.name;
+      document.getElementById('logo-sub').textContent = config.brand.tagline;
+      document.getElementById('page-title').textContent = config.brand.name + " " + config.brand.tagline;
+    }
+    
+    const navCtaBtn = document.getElementById('nav-cta');
+    navCtaBtn.textContent = config.navCta;
+    navCtaBtn.onclick = () => {
+      if(config.brand && config.brand.whatsapp) {
+        window.open(`https://web.whatsapp.com/send?phone=${config.brand.whatsapp.replace(/[^0-9]/g, '')}`, '_blank');
+      }
+    };
+
+    const navLinks = document.getElementById('nav-links');
+    navLinks.innerHTML = '';
+    config.navLinks.forEach(link => {
+      navLinks.innerHTML += `<li><a href="${link.href}">${link.label}</a></li>`;
+    });
+
+    // Hero
+    if (config.hero) {
+      const hc = document.getElementById('hero-center-container');
+      hc.querySelectorAll('img').forEach(el => el.remove());
+      if(config.hero.sliderImages && config.hero.sliderImages.length > 0) {
+        config.hero.sliderImages.forEach((img, i) => {
+          const el = document.createElement('img');
+          el.src = img.src;
+          el.style.position = i === 0 ? 'relative' : 'absolute';
+          el.style.top = '0'; el.style.left = '0'; el.style.width = '100%'; el.style.height = '100%'; el.style.objectFit = 'cover';
+          el.style.opacity = i === 0 ? '1' : '0';
+          el.style.transition = 'opacity 1s ease-in-out';
+          el.style.zIndex = i === 0 ? '1' : '0';
+          el.classList.add('hero-slide');
+          hc.appendChild(el);
+        });
+        
+        let activeIdx = 0;
+        setInterval(() => {
+          const slides = hc.querySelectorAll('.hero-slide');
+          if(slides.length <= 1) return;
+          slides[activeIdx].style.opacity = '0';
+          slides[activeIdx].style.zIndex = '0';
+          activeIdx = (activeIdx + 1) % slides.length;
+          slides[activeIdx].style.opacity = '1';
+          slides[activeIdx].style.zIndex = '1';
+        }, 3000);
+      }
+    }
+
+    // Callback Strip
+    if (config.callback) {
+      document.getElementById('cb-label').textContent = config.callback.label;
+      document.getElementById('cb-title').textContent = config.callback.title;
+      document.getElementById('cb-subtitle').textContent = config.callback.subtitle;
+    }
+
+    // About
+    if (config.about) {
+      document.getElementById('about-label').textContent = config.about.label;
+      document.getElementById('about-title').innerHTML = config.about.title.replace(/\\n|\n/g, '<br>');
+      document.getElementById('about-btn').textContent = config.about.buttonText;
+      const paras = document.getElementById('about-paragraphs');
+      paras.innerHTML = '';
+      config.about.paragraphs.forEach(p => paras.innerHTML += `<p style="margin-bottom:12px;font-size:.8rem;color:#666;line-height:1.9;">${p}</p>`);
+      const imgs = document.getElementById('about-images');
+      imgs.innerHTML = '';
+      config.about.images.forEach(img => imgs.innerHTML += `<img src="${img.src}" alt="${img.alt}">`);
+    }
+
+    // Services
+    if (config.services) {
+      document.getElementById('svc-label').textContent = config.services.label;
+      document.getElementById('svc-title').textContent = config.services.title;
+      document.getElementById('svc-subtitle').textContent = config.services.subtitle;
+      const grid = document.getElementById('services-grid');
+      grid.innerHTML = '';
+      config.services.items.forEach(s => {
+        grid.innerHTML += `
+          <div class="service-card">
+            <img src="${s.image}" alt="${s.name}">
+            <div class="service-label">${s.name}</div>
+          </div>`;
+      });
+    }
+
+    // Gallery
+    if (config.gallery) {
+      document.getElementById('gal-label').textContent = config.gallery.label;
+      document.getElementById('gal-title').textContent = config.gallery.title;
+      const gGrid = document.getElementById('gallery-grid');
+      gGrid.innerHTML = '';
+      config.gallery.images.forEach(g => {
+        gGrid.innerHTML += `
+          <div class="gallery-item">
+            <img src="${g.src}" alt="Gallery Image">
+          </div>`;
+      });
+    }
+
+    // Floating WhatsApp
+    if (config.brand && config.brand.whatsapp) {
+      document.getElementById('floating-wa').href = `https://web.whatsapp.com/send?phone=${config.brand.whatsapp.replace(/[^0-9]/g, '')}`;
+    }
+
+    // Contact
+    if (config.contact && config.brand) {
+      document.getElementById('contact-label').textContent = config.contact.label;
+      document.getElementById('contact-title').textContent = config.contact.title;
+      document.getElementById('contact-subtitle').textContent = config.contact.subtitle;
+      document.getElementById('contact-address').textContent = config.brand.address;
+      document.getElementById('contact-phones').innerHTML = `${config.brand.phone1}<br>${config.brand.phone2}`;
+      document.getElementById('contact-emails').innerHTML = `${config.brand.email1}<br>${config.brand.email2}`;
+    }
+
+    // Why Choose Us
+    if (config.whyChoose) {
+      document.getElementById('why-label').textContent = config.whyChoose.label;
+      document.getElementById('why-title').textContent = config.whyChoose.title;
+      document.getElementById('why-subtitle').textContent = config.whyChoose.subtitle;
+      document.getElementById('why-img').src = config.whyChoose.centerImage;
+      const left = document.getElementById('why-left'); left.innerHTML = '';
+      config.whyChoose.leftItems.forEach(i => {
+        left.innerHTML += `
+          <div class="why-item">
+            <i class="${i.icon} why-icon"></i>
+            <div><h4>${i.title}</h4><p>${i.text}</p></div>
+          </div>`;
+      });
+      const right = document.getElementById('why-right'); right.innerHTML = '';
+      config.whyChoose.rightItems.forEach(i => {
+        right.innerHTML += `
+          <div class="why-item right">
+            <i class="${i.icon} why-icon"></i>
+            <div><h4>${i.title}</h4><p>${i.text}</p></div>
+          </div>`;
+      });
+    }
+
+    // Key Services
+    if (config.keyServices) {
+      document.getElementById('ks-title').textContent = config.keyServices.title;
+      document.getElementById('ks-subtitle').textContent = config.keyServices.subtitle;
+      document.getElementById('ks-desc').textContent = config.keyServices.description;
+      document.getElementById('ks-btn').textContent = config.keyServices.buttonText;
+      const list = document.getElementById('ks-list');
+      list.innerHTML = '';
+      config.keyServices.items.forEach(item => {
+        list.innerHTML += `<li>${item}</li>`;
+      });
+    }
+
+    // Testimonials
+    if (config.testimonials) {
+      const wrap = document.getElementById('testimonials-wrapper');
+      const dots = document.getElementById('testimonial-dots');
+      wrap.innerHTML = '';
+      dots.innerHTML = '';
+      config.testimonials.forEach((t, i) => {
+        const starsHtml = '★'.repeat(t.stars) + '☆'.repeat(5 - t.stars);
+        wrap.innerHTML += `
+          <div class="testimonial-card ${i===0?'active':''}" id="test-slide-${i}" style="margin-top:36px;">
+            <img class="testimonial-img" src="${t.image}" alt="${t.name}">
+            <div class="stars">${starsHtml}</div>
+            <p>${t.text}</p>
+            <h4>— ${t.name}, ${t.location}</h4>
+          </div>`;
+        dots.innerHTML += `<div class="dot ${i===0?'active':''}" onclick="showTestimonial(${i})"></div>`;
+      });
+    }
+
+    // FAQ
+    if (config.faqs) {
+      const faqList = document.getElementById('faq-list');
+      faqList.innerHTML = '';
+      config.faqs.forEach(f => {
+        faqList.innerHTML += `
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+              <span>${f.question}</span><i class="fas fa-plus"></i>
+            </div>
+            <div class="faq-a">${f.answer}</div>
+          </div>`;
+      });
+    }
+
+    // Excellence
+    if (config.excellence) {
+      document.getElementById('exc-label').textContent = config.excellence.label;
+      document.getElementById('exc-title').textContent = config.excellence.title;
+      const grid = document.getElementById('exc-grid');
+      grid.innerHTML = '';
+      config.excellence.items.forEach(e => {
+        grid.innerHTML += `<div class="excellence-card"><i class="${e.icon}"></i><p>${e.text}</p></div>`;
+      });
+    }
+
+    // Blogs
+    if (config.blogs) {
+      document.getElementById('blogs-label').textContent = config.blogs.label;
+      document.getElementById('blogs-title').textContent = config.blogs.title;
+      const bGrid = document.getElementById('blogs-grid');
+      bGrid.innerHTML = '';
+      config.blogs.items.forEach(b => {
+        bGrid.innerHTML += `
+          <div class="blog-card">
+            <img src="${b.image}" alt="${b.heading}">
+            <div class="blog-card-body">
+              <div class="blog-tag">${b.tag}</div>
+              <h4>${b.heading}</h4>
+              <p>${b.excerpt}</p>
+              <a href="#" class="read-more">READ MORE →</a>
+            </div>
+          </div>`;
+      });
+    }
+
+    // Footer Callback
+    if (config.footerCallback) {
+      document.getElementById('fcb-label').textContent = config.footerCallback.label;
+      document.getElementById('fcb-title').textContent = config.footerCallback.title;
+      document.getElementById('fcb-subtitle').textContent = config.footerCallback.subtitle;
+    }
+
+    // Footer Links & Brand
+    if (config.brand) {
+      document.getElementById('f-logo-name').textContent = config.brand.name;
+      document.getElementById('f-logo-sub').textContent = config.brand.tagline;
+      document.getElementById('f-desc').textContent = config.brand.description;
+      document.getElementById('f-contact-addr').textContent = config.brand.address;
+      document.getElementById('f-contact-phones').innerHTML = `${config.brand.phone1}<br>${config.brand.phone2}`;
+      document.getElementById('f-contact-emails').innerHTML = `${config.brand.email1}<br>${config.brand.email2}`;
+      document.getElementById('f-copyright').textContent = config.brand.copyright;
+      if (config.social) {
+        document.getElementById('soc-fb').href = config.social.facebook;
+        document.getElementById('soc-ig').href = config.social.instagram;
+        document.getElementById('soc-yt').href = config.social.youtube;
+        document.getElementById('soc-pin').href = config.social.pinterest;
+      }
+    }
+    const qLinks = document.getElementById('f-quick'); qLinks.innerHTML = '';
+    config.footerQuickLinks.forEach(l => qLinks.innerHTML += `<li><a href="${l.href}">${l.label}</a></li>`);
+    const sLinks = document.getElementById('f-services'); sLinks.innerHTML = '';
+    config.footerServiceLinks.forEach(l => sLinks.innerHTML += `<li><a href="${l.href}">${l.label}</a></li>`);
+  }
+
+  function toggleFaq(el) {
+    const answer = el.nextElementSibling;
+    const isOpen = el.classList.contains('open');
+    document.querySelectorAll('.faq-q').forEach(q => {
+      q.classList.remove('open');
+      q.nextElementSibling.classList.remove('show');
+    });
+    if (!isOpen) {
+      el.classList.add('open');
+      answer.classList.add('show');
+    }
+  }
+
+  function showTestimonial(index) {
+    document.querySelectorAll('.testimonial-card').forEach((c, i) => {
+      c.style.display = i === index ? 'block' : 'none';
+    });
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.className = i === index ? 'dot active' : 'dot';
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderSite();
+
+    // Hamburger Menu Logic
+    const hamburger = document.getElementById('hamburger');
+    const navLinksList = document.getElementById('nav-links');
+    if (hamburger && navLinksList) {
+      hamburger.onclick = () => {
+        navLinksList.classList.toggle('active');
+        const icon = hamburger.querySelector('i');
+        if (navLinksList.classList.contains('active')) {
+          icon.className = 'fas fa-times';
+        } else {
+          icon.className = 'fas fa-bars';
+        }
+      };
+      navLinksList.onclick = (e) => {
+        if (e.target.tagName === 'A') {
+          navLinksList.classList.remove('active');
+          hamburger.querySelector('i').className = 'fas fa-bars';
+        }
+      };
+    }
+    
+    // Form Submission Logic
+    const configData = typeof getActiveConfig === 'function' ? getActiveConfig() : BUSINESS_CONFIG;
+    const toEmail = (configData && configData.brand && configData.brand.email1) || '';
+
+    const firstForm = document.getElementById('first-callback-form');
+    if (firstForm) {
+      firstForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('cb-name').value;
+        const phone = document.getElementById('cb-phone').value;
+        const email = document.getElementById('cb-email').value;
+        if (!name || !phone) return alert('Please enter your Name and Phone.');
+        const subject = encodeURIComponent(`Callback Request from ${name}`);
+        const body = encodeURIComponent(`Name: ${name}\nPhone: ${phone}\nEmail: ${email}\n\nPlease call back at your earliest convenience.`);
+        window.open(`mailto:${toEmail}?subject=${subject}&body=${body}`, '_blank');
+        const submitBtn = document.getElementById('cb-submit');
+        const oldText = submitBtn.textContent;
+        submitBtn.textContent = '✓ SENT!';
+        setTimeout(() => {
+          submitBtn.textContent = oldText;
+          firstForm.reset();
+        }, 3000);
+      });
+    }
+
+    const secondForm = document.getElementById('second-callback-form');
+    if (secondForm) {
+      secondForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('fcb-name').value;
+        const phone = document.getElementById('fcb-phone').value;
+        const email = document.getElementById('fcb-email').value;
+        if (!name || !phone) return alert('Please enter your Name and Phone.');
+        const subject = encodeURIComponent(`Callback Request from ${name}`);
+        const body = encodeURIComponent(`Name: ${name}\nPhone: ${phone}\nEmail: ${email}\n\nPlease call back at your earliest convenience.`);
+        window.open(`mailto:${toEmail}?subject=${subject}&body=${body}`, '_blank');
+        const submitBtn = document.getElementById('fcb-submit');
+        const oldText = submitBtn.textContent;
+        submitBtn.textContent = '✓ SENT!';
+        setTimeout(() => {
+          submitBtn.textContent = oldText;
+          secondForm.reset();
+        }, 3000);
+      });
+    }
+
+    // Scroll Reveal Animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+    document.querySelectorAll('section, .hero, .footer-grid, .service-card, .blog-card, .excellence-card, .why-item, .gallery-item').forEach(el => {
+      el.classList.add('reveal');
+      observer.observe(el);
+    });
+  });
+</script>
+</body>
+</html>
